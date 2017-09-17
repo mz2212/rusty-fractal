@@ -1,0 +1,8 @@
+[package]
+name = "rust_mandelbrot"
+version = "0.1.0"
+authors = ["Mike <michaelpulliam1@gmail.com>"]
+
+[dependencies]
+sdl2 = "0.30"
+hsv_rgb = { path = "../hsv_rgb" }
