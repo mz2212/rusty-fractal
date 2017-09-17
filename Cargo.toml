@@ -5,4 +5,4 @@ authors = ["Mike <michaelpulliam1@gmail.com>"]
 
 [dependencies]
 sdl2 = "0.30"
-hsv_rgb = { path = "../hsv_rgb" }
+hsv_rgb = { git = "https://github.com/mz2212/hsv_rgb.git" }
