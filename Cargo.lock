@@ -2,7 +2,7 @@
 name = "rust_mandelbrot"
 version = "0.1.0"
 dependencies = [
- "hsv_rgb 0.1.0",
+ "hsv_rgb 0.1.0 (git+https://github.com/mz2212/hsv_rgb.git)",
  "sdl2 0.30.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -27,6 +27,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "hsv_rgb"
 version = "0.1.0"
+source = "git+https://github.com/mz2212/hsv_rgb.git#52b989957432cf82497809fbd84c40f7b9d431d5"
 
 [[package]]
 name = "lazy_static"
@@ -121,6 +122,7 @@ dependencies = [
 "checksum bitflags 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "aad18937a628ec6abcd26d1489012cc0e18c21798210f491af69ded9b881106d"
 "checksum conv 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)" = "78ff10625fd0ac447827aa30ea8b861fead473bb60aeb73af6c1c58caf0d1299"
 "checksum custom_derive 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)" = "ef8ae57c4978a2acd8b869ce6b9ca1dfe817bff704c220209fdef2c0b75a01b9"
+"checksum hsv_rgb 0.1.0 (git+https://github.com/mz2212/hsv_rgb.git)" = "<none>"
 "checksum lazy_static 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)" = "3b37545ab726dd833ec6420aaba8231c5b320814b9029ad585555d2a03e94fbf"
 "checksum libc 0.2.30 (registry+https://github.com/rust-lang/crates.io-index)" = "2370ca07ec338939e356443dac2296f581453c35fe1e3a3ed06023c49435f915"
 "checksum magenta 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "4bf0336886480e671965f794bc9b6fce88503563013d1bfb7a502c81fe3ac527"
