@@ -5,15 +5,10 @@ use sdl2::pixels::Color;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use std::time::Duration;
-use std::vec::Vec;
-use std::thread::{JoinHandle, spawn};
-use std::sync::mpsc::channel;
 use std::io;
 
 const WIDTH: u32 = 1280;
 const HEIGHT: u32 = 720;
-const SINGLEHUEMODE: bool = false;
-const HUE: u8 = 220;
 
 fn main() {
     let mut sdl_quit = false;
@@ -23,7 +18,7 @@ fn main() {
     let mut zoom = 1.0;
     let mut move_x = -0.5;
     let mut move_y = 0.0;
-    let mut move_speed = 0.1;
+    let move_speed = 0.1;
     let mut zoom_speed = 1.25;
     let mut iter_array = [[0; WIDTH as usize +1]; HEIGHT as usize + 1];
     let mut single_hue_mode: bool = false;
@@ -45,7 +40,7 @@ fn main() {
     while !sdl_quit {
         if calc_brot {
             for x in 0..WIDTH {
-                for mut y in 0..HEIGHT {
+                for y in 0..HEIGHT {
                         iter_array[y as usize][x as usize] = crunch(max_iter, x, y, zoom, move_x, move_y)
                 }
             }
@@ -145,7 +140,8 @@ fn main() {
 }
 
 fn paint(x: u32, y: u32, iter: u32, max_iter: u32, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>, single_hue: bool, hue: u8) {
-    let mut color = hsv_rgb::RGBColor::new(0, 0, 0);
+    // Why doesn't this need to be mutable?
+    let color: hsv_rgb::RGBColor;
     if single_hue {
         color = hsv_rgb::HSVColor{
             h: hue,
@@ -160,7 +156,7 @@ fn paint(x: u32, y: u32, iter: u32, max_iter: u32, canvas: &mut sdl2::render::Ca
         }.to_rgb();
     }
     canvas.set_draw_color(Color::RGB(color.r, color.g, color.b));
-    canvas.draw_point(sdl2::rect::Point::new(x as i32, y as i32));
+    let _ = canvas.draw_point(sdl2::rect::Point::new(x as i32, y as i32));
 }
 
 fn crunch(max_iter: u32, x: u32, y: u32, zoom: f64, move_x: f64, move_y: f64) -> u32 {
