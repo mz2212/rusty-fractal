@@ -66,13 +66,7 @@ fn main() {
 				},
 				Event::Window {win_event: wevent, ..} => {
 					match wevent {
-						WindowEvent::Resized {..} => {
-							width = canvas.window().size().0;
-							height = canvas.window().size().1;
-							iter_array = vec![vec![0; width as usize + 1]; height as usize + 1];
-							calc_brot = true;
-						},
-						WindowEvent::SizeChanged {..} => {
+						WindowEvent::Resized | WindowEvent::SizeChanged {..} => {
 							width = canvas.window().size().0;
 							height = canvas.window().size().1;
 							iter_array = vec![vec![0; width as usize + 1]; height as usize + 1];
