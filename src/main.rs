@@ -5,6 +5,7 @@ use sdl2::pixels::Color;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::event::WindowEvent;
+use sdl2::video::FullscreenType;
 use std::time::Duration;
 use std::io;
 
@@ -66,7 +67,7 @@ fn main() {
 				},
 				Event::Window {win_event: wevent, ..} => {
 					match wevent {
-						WindowEvent::Resized | WindowEvent::SizeChanged {..} => {
+						WindowEvent::Resized {..} | WindowEvent::SizeChanged {..} => {
 							width = canvas.window().size().0;
 							height = canvas.window().size().1;
 							iter_array = vec![vec![0; width as usize + 1]; height as usize + 1];
@@ -116,6 +117,13 @@ fn main() {
 						Keycode::M => {
 							single_hue_mode = !single_hue_mode;
 							do_render = true;
+						},
+						Keycode::F => {
+							if canvas.window().fullscreen_state() == FullscreenType::Off {
+								let _ = canvas.window_mut().set_fullscreen(FullscreenType::Desktop);
+							} else {
+								let _ = canvas.window_mut().set_fullscreen(FullscreenType::Off);
+							}
 						},
 						Keycode::H => { // Special, Need to get input from console.
 							let mut input_text = String::new();
