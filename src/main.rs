@@ -10,10 +10,11 @@ use std::time::Duration;
 use std::io;
 
 mod mandelbrot;
+mod julia;
 
 fn main() {
 	let mut sdl_quit = false;
-	let mut calc_brot = true;
+	let mut calc = true;
 	let mut do_render = true;
 	let mut max_iter = 256;
 	let mut zoom = 1.0;
@@ -23,13 +24,16 @@ fn main() {
 	let mut zoom_speed = 1.25;
 	let mut single_hue_mode: bool = false;
 	let mut hue: u8 = 220;
+	let mut mode = Mode::Mandelbrot;
+	let julia_real = -0.7;
+	let julia_imag = 0.27015;
 
 	// SDL setup. Go takes care of this bit.
 	let sdl_context = sdl2::init().unwrap();
 	let mut event_pump = sdl_context.event_pump().unwrap();
 	let video_subsystem = sdl_context.video().unwrap();
 	// You do the below in Go as well.
-	let window = video_subsystem.window("Mandelbrot", 1280, 720)
+	let window = video_subsystem.window("Fractals", 1280, 720)
 		.position_centered()
 		.resizable()
 		.opengl()
@@ -41,13 +45,16 @@ fn main() {
 	let mut iter_array = vec![vec![0; width as usize + 1]; height as usize + 1];
 
 	while !sdl_quit {
-		if calc_brot {
+		if calc {
 			for x in 0..width {
 				for y in 0..height {
-						iter_array[y as usize][x as usize] = mandelbrot::crunch(max_iter, x, y, zoom, move_x, move_y, width, height)
+					match mode {
+						Mode::Mandelbrot => iter_array[y as usize][x as usize] = mandelbrot::crunch(max_iter, x, y, zoom, move_x, move_y, width, height),
+						Mode::Julia => iter_array[y as usize][x as usize] = julia::crunch(max_iter, x, y, zoom, move_x, move_y, width, height, julia_real, julia_imag)
+					}
 				}
 			}
-			calc_brot = false;
+			calc = false;
 			do_render = true;
 		}
 
@@ -73,7 +80,7 @@ fn main() {
 							width = canvas.window().size().0;
 							height = canvas.window().size().1;
 							iter_array = vec![vec![0; width as usize + 1]; height as usize + 1];
-							calc_brot = true;
+							calc = true;
 						},
 						_ => {}
 					}
@@ -82,39 +89,39 @@ fn main() {
 					match key.unwrap() {
 						Keycode::A | Keycode::Left => {
 							move_x -= move_speed / zoom;
-							calc_brot = true;
+							calc = true;
 						},
 						Keycode::D | Keycode::Right => {
 							move_x += move_speed / zoom;
-							calc_brot = true;
+							calc = true;
 						},
 						Keycode::W | Keycode::Up => {
 							move_y -= move_speed / zoom;
-							calc_brot = true;
+							calc = true;
 						},
 						Keycode::S | Keycode::Down => {
 							move_y += move_speed / zoom;
-							calc_brot = true;
+							calc = true;
 						},
 						Keycode::E | Keycode::PageUp => {
 							zoom *= zoom_speed;
 							zoom_speed += 0.05;
-							calc_brot = true;
+							calc = true;
 						},
 						Keycode::Q | Keycode::PageDown => {
 							zoom /= zoom_speed;
 							zoom_speed -= 0.05;
-							calc_brot = true;
+							calc = true;
 						},
 						Keycode::Equals => {
 							max_iter *= 2;
-							calc_brot = true;
+							calc = true;
 						},
 						Keycode::Minus => {
 							if max_iter > 2 {
 								max_iter /= 2;
 							}
-							calc_brot = true;
+							calc = true;
 						},
 						Keycode::M => {
 							single_hue_mode = !single_hue_mode;
@@ -126,6 +133,20 @@ fn main() {
 							} else {
 								let _ = canvas.window_mut().set_fullscreen(FullscreenType::Off);
 							}
+						},
+						Keycode::Num1 => {
+							mode = Mode::Mandelbrot;
+							zoom = 1.0;
+							move_x = -0.5;
+							move_y = 0.0;
+							calc = true;
+						},
+						Keycode::Num2 => {
+							mode = Mode::Julia;
+							zoom = 1.0;
+							move_x = 0.0;
+							move_y = 0.0;
+							calc = true;
 						},
 						Keycode::H => { // Special, Need to get input from console.
 							let mut input_text = String::new();
@@ -171,4 +192,9 @@ fn paint(x: u32, y: u32, iter: u32, max_iter: u32, canvas: &mut sdl2::render::Ca
 	}
 	canvas.set_draw_color(Color::RGB(color.r, color.g, color.b));
 	let _ = canvas.draw_point(sdl2::rect::Point::new(x as i32, y as i32));
+}
+
+enum Mode {
+	Mandelbrot,
+	Julia,
 }
