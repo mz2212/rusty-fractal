@@ -2,18 +2,23 @@
 extern crate glium;
 
 use glium::{glutin, Surface};
+use glium::glutin::KeyboardInput;
+use glium::glutin::VirtualKeyCode;
 use std::io::prelude::*;
 use std::fs::OpenOptions;
 use std::path::PathBuf;
+use std::time::Duration;
 
 
 fn main() {
-	let loc: [f32; 2] = [-0.5, 0.0];
+	let mut loc: [f64; 2] = [-0.5, 0.0];
 	let mut width: u32;
 	let mut height: u32;
-	let max_iter = 300;
-	let zoom: f32 = 1.0;
+	let mut max_iter = 256;
+	let mut zoom: f64 = 1.0;
 	let mut render = true;
+	let move_speed = 0.1;
+	let mut zoom_speed = 1.25;
 
 	let mut path = PathBuf::new();
 	path.push(std::env::current_exe().unwrap());
@@ -90,9 +95,56 @@ fn main() {
 					glutin::WindowEvent::Resized {..} => { render = true },
 					_ => {}
 				},
+				glutin::Event::DeviceEvent { event, .. } => match event {
+					glutin::DeviceEvent::Key { 0: input } => {
+						match input.virtual_keycode.unwrap_or(VirtualKeyCode::B) {
+							VirtualKeyCode::A | VirtualKeyCode::Left => {
+								loc[0] -= move_speed / zoom;
+								render = true;
+							},
+							VirtualKeyCode::D | VirtualKeyCode::Right => {
+								loc[0] += move_speed / zoom;
+								render = true;
+							},
+							VirtualKeyCode::S | VirtualKeyCode::Down => {
+								loc[1] -= move_speed / zoom;
+								render = true;
+							},
+							VirtualKeyCode::W | VirtualKeyCode::Up => {
+								loc[1] += move_speed / zoom;
+								render = true;
+							},
+							VirtualKeyCode::Equals => {
+								if max_iter < 4096 {
+									max_iter *= 2;
+									render = true;
+								}
+							},
+							VirtualKeyCode::Minus => {
+								if max_iter > 2 {
+									max_iter /= 2;
+									render = true;
+								}
+							},
+							VirtualKeyCode::E | VirtualKeyCode::PageUp => {
+								zoom *= zoom_speed;
+								zoom_speed += 0.05;
+								render = true;
+							},
+							VirtualKeyCode::Q | VirtualKeyCode::PageDown => {
+								zoom /= zoom_speed;
+								zoom_speed -= 0.05;
+								render = true;
+							},
+							_ => {}
+						}
+					},
+					_ => {}
+				},
 				_ => {}
 			}
 		});
+		::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
 	}
 }
 

@@ -1,17 +1,17 @@
-uniform vec2 loc;
-uniform float zoom;
+uniform dvec2 loc;
+uniform double zoom;
 uniform int max_iter;
 uniform uint width;
 uniform uint height;
 out vec3 color;
 
 void main() {
-	vec2 old, new, pix;
+	dvec2 old, new, pix;
 	vec3 hsv;
 	bool to_break;
 
-	pix[0] = 1.5*(gl_FragCoord.x - float(width) / 2.0) / (0.5 * zoom * width) + loc.x;
-	pix[1] = (gl_FragCoord.y - float(height) / 2.0) / (0.5 * zoom * height) + loc.y;
+	pix[0] = 1.5*(gl_FragCoord.x - double(width) / 2.0) / (0.5 * zoom * width) + loc.x;
+	pix[1] = (gl_FragCoord.y - double(height) / 2.0) / (0.5 * zoom * height) + loc.y;
 
 	int i;
 	new[0] = 0.0;

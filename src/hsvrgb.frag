@@ -1,4 +1,4 @@
-#version 140
+#version 450
 
 // Not a damn clue how this works...
 vec3 rgb2hsv(vec3 c)
