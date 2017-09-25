@@ -26,6 +26,6 @@ void main() {
 
 	hsv[0] = float(i) / float(max_iter);
 	hsv[1] = 1.0;
-	hsv[2] = float((i < max_iter)) * 1.0;
+	hsv[2] = float(i < max_iter) * 1.0;
 	color = vec4(hsv2rgb(hsv), 1.0);
 }

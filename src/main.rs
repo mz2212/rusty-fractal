@@ -31,8 +31,7 @@ fn main() {
 	let mut brot_src = String::new();
 	let mut julia_src = String::new();
 	let _ = file.read_to_string(&mut brot_src);
-	let _ = file.seek(SeekFrom::Start(0));
-	let _ = file.read_to_string(&mut julia_src);
+	julia_src = brot_src.clone();
 	drop(file);
 	path.set_file_name("mandelbrot.frag");
 	let mut file = OpenOptions::new()
