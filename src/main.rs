@@ -41,12 +41,12 @@ fn main() {
 	// For some reason I can't draw quads with glium
 	implement_vertex!(Vertex, pos);
 	let vert1 = Vertex { pos: [-1.0, -1.0] };
-    let vert2 = Vertex { pos: [1.0, -1.0] };
-    let vert3 = Vertex { pos: [1.0, 1.0] };
-    let vert4 = Vertex { pos: [-1.0, -1.0] };
-    let vert5 = Vertex { pos: [-1.0, 1.0] };
-    let vert6 = Vertex { pos: [1.0, 1.0] };
-    let shape = vec![vert1, vert2, vert3, vert4, vert5, vert6];
+	let vert2 = Vertex { pos: [1.0, -1.0] };
+	let vert3 = Vertex { pos: [1.0, 1.0] };
+	let vert4 = Vertex { pos: [-1.0, -1.0] };
+	let vert5 = Vertex { pos: [-1.0, 1.0] };
+	let vert6 = Vertex { pos: [1.0, 1.0] };
+	let shape = vec![vert1, vert2, vert3, vert4, vert5, vert6];
 
 	// Vertex Buffer and indices
 	let vert_buf = glium::VertexBuffer::new(&display, &shape).unwrap();
