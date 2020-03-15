@@ -11,6 +11,7 @@ use std::io;
 
 mod mandelbrot;
 mod julia;
+mod carpet;
 
 fn main() {
 	let mut sdl_quit = false;
@@ -24,7 +25,7 @@ fn main() {
 	let mut zoom_speed = 1.25;
 	let mut single_hue_mode: bool = false;
 	let mut hue: u8 = 220;
-	let mut mode = Mode::Mandelbrot;
+	let mut mode = Mode::Carpet;
 	let julia_real = -0.7;
 	let julia_imag = 0.27015;
 
@@ -50,7 +51,8 @@ fn main() {
 				for y in 0..height {
 					match mode {
 						Mode::Mandelbrot => iter_array[y as usize][x as usize] = mandelbrot::crunch(max_iter, x, y, zoom, move_x, move_y, width, height),
-						Mode::Julia => iter_array[y as usize][x as usize] = julia::crunch(max_iter, x, y, zoom, move_x, move_y, width, height, julia_real, julia_imag)
+						Mode::Julia => iter_array[y as usize][x as usize] = julia::crunch(max_iter, x, y, zoom, move_x, move_y, width, height, julia_real, julia_imag),
+						Mode::Carpet => iter_array[y as usize][x as usize] = carpet::crunch(x, y, max_iter)
 					}
 				}
 			}
@@ -197,4 +199,5 @@ fn paint(x: u32, y: u32, iter: u32, max_iter: u32, canvas: &mut sdl2::render::Ca
 enum Mode {
 	Mandelbrot,
 	Julia,
+	Carpet,
 }
