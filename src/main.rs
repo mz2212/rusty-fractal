@@ -152,6 +152,7 @@ fn main() {
 						},
 						Keycode::Num3 => {
 							mode = Mode::Carpet;
+							calc = true;
 						},
 						Keycode::H => { // Special, Need to get input from console.
 							let mut input_text = String::new();
