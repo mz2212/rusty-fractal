@@ -150,6 +150,9 @@ fn main() {
 							move_y = 0.0;
 							calc = true;
 						},
+						Keycode::Num3 => {
+							mode = Mode::Carpet;
+						},
 						Keycode::H => { // Special, Need to get input from console.
 							let mut input_text = String::new();
 							println!("Please input a hue (0-360)");
