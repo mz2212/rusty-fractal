@@ -27,6 +27,7 @@ fn main() {
 	let mut mode = Mode::Mandelbrot;
 	let julia_real = -0.7;
 	let julia_imag = 0.27015;
+	let max_threads = 32;
 
 	// SDL setup. Go takes care of this bit.
 	let sdl_context = sdl2::init().unwrap();
@@ -42,17 +43,17 @@ fn main() {
 	
 	let mut canvas = window.into_canvas().build().unwrap();
 	let (mut width, mut height) = canvas.window().size();
-	let mut iter_array = vec![vec![0; width as usize + 1]; height as usize + 1];
+	let mut iter_array = vec![0; (width*height) as usize + 1];
 
 	while !sdl_quit {
 		if calc {
-			for x in 0..width {
-				for y in 0..height {
-					match mode {
-						Mode::Mandelbrot => iter_array[y as usize][x as usize] = mandelbrot::crunch(max_iter, x, y, zoom, move_x, move_y, width, height),
-						Mode::Julia => iter_array[y as usize][x as usize] = julia::crunch(max_iter, x, y, zoom, move_x, move_y, width, height, julia_real, julia_imag)
-					}
-				}
+			match mode {
+				Mode::Mandelbrot => {
+					//iter_array[y as usize][x as usize] = mandelbrot::crunch(max_iter, x, y, zoom, move_x, move_y, width, height)
+					iter_array = mandelbrot::crunch(max_iter, iter_array, zoom, move_x, move_y, width, height, max_threads);
+				},
+				//Mode::Julia => iter_array[y as usize][x as usize] = julia::crunch(max_iter, x, y, zoom, move_x, move_y, width, height, julia_real, julia_imag)
+				_ => {}
 			}
 			calc = false;
 			do_render = true;
@@ -60,10 +61,8 @@ fn main() {
 
 		if do_render {
 			canvas.clear();
-			for x in 0..width {
-				for y in 0..height {
-					paint(x, y, iter_array[y as usize][x as usize], max_iter, &mut canvas, single_hue_mode, hue)
-				}
+			for q in 0..width*height {
+				paint(q%width, q/width, iter_array[q as usize], max_iter, &mut canvas, single_hue_mode, hue)
 			}
 			canvas.present();
 			do_render = false;
@@ -79,7 +78,7 @@ fn main() {
 						WindowEvent::Resized {..} | WindowEvent::SizeChanged {..} => {
 							width = canvas.window().size().0;
 							height = canvas.window().size().1;
-							iter_array = vec![vec![0; width as usize + 1]; height as usize + 1];
+							iter_array = vec![0; (width*height) as usize + 1];
 							calc = true;
 						},
 						_ => {}
