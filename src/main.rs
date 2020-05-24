@@ -11,6 +11,7 @@ use std::io;
 
 mod mandelbrot;
 mod julia;
+mod threading;
 
 fn main() {
 	let mut sdl_quit = false;
@@ -25,8 +26,7 @@ fn main() {
 	let mut single_hue_mode: bool = false;
 	let mut hue: u8 = 220;
 	let mut mode = Mode::Mandelbrot;
-	let julia_real = -0.7;
-	let julia_imag = 0.27015;
+
 	let max_threads = 32;
 
 	// SDL setup. Go takes care of this bit.
@@ -47,14 +47,7 @@ fn main() {
 
 	while !sdl_quit {
 		if calc {
-			match mode {
-				Mode::Mandelbrot => {
-					//iter_array[y as usize][x as usize] = mandelbrot::crunch(max_iter, x, y, zoom, move_x, move_y, width, height)
-					iter_array = mandelbrot::crunch(max_iter, iter_array, zoom, move_x, move_y, width, height, max_threads);
-				},
-				//Mode::Julia => iter_array[y as usize][x as usize] = julia::crunch(max_iter, x, y, zoom, move_x, move_y, width, height, julia_real, julia_imag)
-				_ => {}
-			}
+			iter_array = threading::crunch(max_iter, iter_array, zoom, move_x, move_y, width, height, max_threads, mode);
 			calc = false;
 			do_render = true;
 		}
@@ -193,7 +186,8 @@ fn paint(x: u32, y: u32, iter: u32, max_iter: u32, canvas: &mut sdl2::render::Ca
 	let _ = canvas.draw_point(sdl2::rect::Point::new(x as i32, y as i32));
 }
 
-enum Mode {
+#[derive(Debug, Copy, Clone)]
+pub enum Mode {
 	Mandelbrot,
 	Julia,
 }
