@@ -29,11 +29,13 @@ fn main() {
 	let mut mode = Mode::Mandelbrot;
 
 	let max_threads = 32;
+	let mut ss_factor = 1; // any above 4 is waaaay too slow. If I want to supersample further, I'm going to need to move to GLSL or compute shaders
 
 	// SDL setup. Go takes care of this bit.
 	let sdl_context = sdl2::init().unwrap();
 	let mut event_pump = sdl_context.event_pump().unwrap();
 	let video_subsystem = sdl_context.video().unwrap();
+	
 	// You do the below in Go as well.
 	let window = video_subsystem.window("Fractals", 1280, 720)
 		.position_centered()
@@ -44,6 +46,10 @@ fn main() {
 	
 	let mut canvas = window.into_canvas().build().unwrap();
 	let (mut width, mut height) = canvas.window().size();
+	width *= ss_factor;
+	height *= ss_factor;
+
+	canvas.set_logical_size(width, height).unwrap();
 	let mut iter_array = vec![0; (width*height) as usize + 1];
 
 	while !sdl_quit {
@@ -72,6 +78,9 @@ fn main() {
 						WindowEvent::Resized {..} | WindowEvent::SizeChanged {..} => {
 							width = canvas.window().size().0;
 							height = canvas.window().size().1;
+							width *= ss_factor;
+							height *= ss_factor;
+							canvas.set_logical_size(width, height).unwrap();
 							iter_array = vec![0; (width*height) as usize + 1];
 							calc = true;
 						},
@@ -141,6 +150,26 @@ fn main() {
 							move_y = 0.0;
 							calc = true;
 						},
+						Keycode::Z => {
+							ss_factor -= 1;
+							width = canvas.window().size().0;
+							height = canvas.window().size().1;
+							width *= ss_factor;
+							height *= ss_factor;
+							canvas.set_logical_size(width, height).unwrap();
+							iter_array = vec![0; (width*height) as usize + 1];
+							calc = true;
+						},
+						Keycode::X => {
+							ss_factor += 1;
+							width = canvas.window().size().0;
+							height = canvas.window().size().1;
+							width *= ss_factor;
+							height *= ss_factor;
+							canvas.set_logical_size(width, height).unwrap();
+							iter_array = vec![0; (width*height) as usize + 1];
+							calc = true;
+						}
 						Keycode::H => { // Special, Need to get input from console.
 							let mut input_text = String::new();
 							println!("Please input a hue (0-360)");
@@ -168,19 +197,18 @@ fn main() {
 }
 
 fn paint(x: u32, y: u32, iter: u32, max_iter: u32, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>, single_hue: bool, hue: u8) {
-	// Why doesn't this need to be mutable?
 	let color: hsv_rgb::RGBColor;
 	if single_hue {
 		color = hsv_rgb::HSVColor{
 			h: hue,
 			s: 255,
-			v: (iter % 256) as u8 * (iter < max_iter) as u8,
+			v: ((iter as f64/max_iter as f64) * 255.0) as u8 * (iter < max_iter) as u8,
 		}.to_rgb();
 	} else {
 		color = hsv_rgb::HSVColor{
-			h: (iter % 256) as u8,
+			h: ((iter as f64/max_iter as f64) * 255.0) as u8,
 			s: 255,
-			v: 255 * (iter < max_iter) as u8
+			v: 255 * (iter < max_iter) as u8,
 		}.to_rgb();
 	}
 	canvas.set_draw_color(Color::RGB(color.r, color.g, color.b));
