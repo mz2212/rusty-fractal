@@ -13,6 +13,7 @@ mod mandelbrot;
 mod julia;
 mod threading;
 
+
 fn main() {
 	let mut sdl_quit = false;
 	let mut calc = true;
@@ -140,6 +141,10 @@ fn main() {
 							move_y = 0.0;
 							calc = true;
 						},
+						Keycode::Num3 => {
+							mode = Mode::Carpet;
+							calc = true;
+						},
 						Keycode::H => { // Special, Need to get input from console.
 							let mut input_text = String::new();
 							println!("Please input a hue (0-360)");
@@ -190,4 +195,5 @@ fn paint(x: u32, y: u32, iter: u32, max_iter: u32, canvas: &mut sdl2::render::Ca
 pub enum Mode {
 	Mandelbrot,
 	Julia,
+	Carpet,
 }
