@@ -195,5 +195,4 @@ fn paint(x: u32, y: u32, iter: u32, max_iter: u32, canvas: &mut sdl2::render::Ca
 pub enum Mode {
 	Mandelbrot,
 	Julia,
-	Carpet,
 }
